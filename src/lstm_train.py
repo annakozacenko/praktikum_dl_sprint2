@@ -10,7 +10,7 @@ import os
 os.makedirs("models", exist_ok=True)
 
 
-# 1. Загружаем данные
+
 data = load_and_clean("data/raw_dataset.txt")
 train_df, val_df, test_df = split_data(data)
 vocab = build_vocab(train_df)
