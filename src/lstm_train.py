@@ -1,3 +1,4 @@
+from configs.config import *
 import torch
 from tqdm import tqdm
 from lstm_model import SimpleRNN
@@ -12,13 +13,13 @@ os.makedirs("models", exist_ok=True)
 
 data = load_and_clean("data/raw_dataset.txt")
 train_df, val_df, test_df = split_data(data)
-vocab = build_vocab(train_df)
+vocab = build_vocab(train_df, MAX_VOCAB_SIZE)
 
 train_dataset = NextTokenDataset(train_df, vocab)
 val_dataset = NextTokenDataset(val_df, vocab)
 
-# batch_size = 64
-batch_size = 256
+
+batch_size = BATCH_SIZE
 
 train_dataloader = DataLoader(
     train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
@@ -28,9 +29,8 @@ val_dataloader = DataLoader(
 )
 
 vocab_size = len(vocab)
-embedding_dim = 128
-# hidden_size = 128
-hidden_size = 256
+embedding_dim = EMBEDDING_DIM
+hidden_size = HIDDEN_SIZE
 output_size = len(vocab)
 
 
@@ -42,10 +42,10 @@ model = SimpleRNN(vocab_size, embedding_dim, hidden_size, output_size)
 model.to(device)
 
 loss_fn = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 train_losses = []
-n_epochs = 10
+n_epochs = EPOCHS
 
 for epoch in range(n_epochs):
     model.train()
@@ -87,5 +87,12 @@ for epoch in range(n_epochs):
         f"ROUGE-2: {rouge_results['rouge2']:.4f}"
     )
 
-torch.save(model.state_dict(), "models/lstm_model.pt")
+torch.save(model.state_dict(), MODEL_PATH)
 print("Модель сохранена в models/lstm_model.pt")
+
+
+import json
+with open(VOCAB_PATH, "w") as f:
+    json.dump(vocab, f)
+
+print("Модель и словарь сохранены")

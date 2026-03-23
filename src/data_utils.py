@@ -1,5 +1,9 @@
+
+from configs.config import *
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from collections import Counter
+
 
 
 def clean_data(data):
@@ -32,9 +36,9 @@ def tokenize(text):
 
 
 def split_data(data):
-    train_df, temp_df = train_test_split(data, test_size=0.2, random_state=42)
+    train_df, temp_df = train_test_split(data, test_size=0.2, random_state=RANDOM_STATE)
 
-    val_df, test_df = train_test_split(temp_df, test_size=0.5, random_state=42)
+    val_df, test_df = train_test_split(temp_df, test_size=0.5, random_state=RANDOM_STATE)
 
     train_df.to_csv("data/train.csv", index=False)
     val_df.to_csv("data/val.csv", index=False)
@@ -43,12 +47,14 @@ def split_data(data):
     return train_df, val_df, test_df
 
 
-def build_vocab(train_df):
-    vocab = {"<unk>": 0}
-    idx = 1
+def build_vocab(train_df, max_vocab_size=10000):
+    counter = Counter()
     for text in train_df["text"]:
         for word in tokenize(text):
-            if word not in vocab:
-                vocab[word] = idx
-                idx += 1
+            counter[word] += 1
+    vocab = {"<unk>": 0}
+    idx = 1
+    for word, _ in counter.most_common(max_vocab_size):
+        vocab[word] = idx
+        idx += 1
     return vocab
