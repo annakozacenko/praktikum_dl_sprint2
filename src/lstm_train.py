@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from configs.config import *
 import torch
 from tqdm import tqdm
@@ -13,6 +17,10 @@ os.makedirs("models", exist_ok=True)
 
 data = load_and_clean("data/raw_dataset.txt")
 train_df, val_df, test_df = split_data(data)
+
+    #train_df= train_df.head(10000)
+    #val_df = val_df.head(1000)
+
 vocab = build_vocab(train_df, MAX_VOCAB_SIZE)
 
 train_dataset = NextTokenDataset(train_df, vocab)
