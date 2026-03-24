@@ -47,14 +47,20 @@ def split_data(data):
     return train_df, val_df, test_df
 
 
-def build_vocab(train_df, max_vocab_size=10000):
+def build_vocab(train_df, max_vocab_size=None, min_freq=2):
     counter = Counter()
     for text in train_df["text"]:
         for word in tokenize(text):
             counter[word] += 1
+    
+    filtered = [(w, c) for w, c in counter.items() if c >= min_freq]
+
+    filtered.sort(key=lambda x: -x[1])
+    if max_vocab_size:
+        filtered = filtered[:max_vocab_size]
+    
     vocab = {"<unk>": 0}
-    idx = 1
-    for word, _ in counter.most_common(max_vocab_size):
+    for idx, (word, _) in enumerate(filtered, start=1):
         vocab[word] = idx
-        idx += 1
     return vocab
+

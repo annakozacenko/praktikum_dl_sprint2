@@ -10,9 +10,15 @@ from next_token_dataset import NextTokenDataset, collate_fn
 from torch.utils.data import DataLoader
 from data_utils import split_data, build_vocab, load_and_clean
 from eval_lstm import evaluate_model
-import os
 
 os.makedirs("models", exist_ok=True)
+
+
+import csv
+
+with open("training_log.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["epoch", "train_loss", "val_loss", "rouge1", "rouge2"])
 
 
 data = load_and_clean("data/raw_dataset.txt")
@@ -21,7 +27,7 @@ train_df, val_df, test_df = split_data(data)
     #train_df= train_df.head(10000)
     #val_df = val_df.head(1000)
 
-vocab = build_vocab(train_df, MAX_VOCAB_SIZE)
+vocab = build_vocab(train_df, MAX_VOCAB_SIZE, MIN_FREQ)
 
 train_dataset = NextTokenDataset(train_df, vocab)
 val_dataset = NextTokenDataset(val_df, vocab)
@@ -45,7 +51,8 @@ output_size = len(vocab)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Используем: {device}")
 
-model = SimpleRNN(vocab_size, embedding_dim, hidden_size, output_size)
+model = SimpleRNN(vocab_size, EMBEDDING_DIM, HIDDEN_SIZE, output_size, NUM_LAYERS, DROPOUT)
+
 
 model.to(device)
 
@@ -94,6 +101,10 @@ for epoch in range(n_epochs):
         f"ROUGE-1: {rouge_results['rouge1']:.4f}, "
         f"ROUGE-2: {rouge_results['rouge2']:.4f}"
     )
+    with open("training_log.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([epoch+1, avg_train_loss, avg_val_loss, rouge_results['rouge1'], rouge_results['rouge2']])
+
 
 torch.save(model.state_dict(), MODEL_PATH)
 print("Модель сохранена в models/lstm_model.pt")

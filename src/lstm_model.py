@@ -4,10 +4,12 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 
 class SimpleRNN(nn.Module):
-    def __init__(self, vocab_size, embedding_dim, hidden_size, output_size):
+    def __init__(self, vocab_size, embedding_dim, hidden_size, output_size, num_layers, dropout):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
-        self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True)
+       # self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True)
+        self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True, num_layers=num_layers, dropout=dropout)
+
         self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, input_ids, lengths):
