@@ -37,6 +37,7 @@ def evaluate_model(model, sample_texts, vocab, max_new_tokens=5, max_samples=Non
     device = next(model.parameters()).device
     idx2word = {v: k for k, v in vocab.items()}
     unk_id = vocab.get("<unk>", 1)
+    eos_id = vocab.get("<eos>", 2)
     all_predictions = []
     all_references = []
 
@@ -50,7 +51,9 @@ def evaluate_model(model, sample_texts, vocab, max_new_tokens=5, max_samples=Non
 
         cut = int(len(words) * 0.75)
         prefix_ids = [vocab.get(w, unk_id) for w in words[:cut]]
-        target_words = words[cut:]
+        
+        target_ids = [vocab.get(w, unk_id) for w in words[cut:]] + [eos_id]
+        target_words = [idx2word.get(tid, "<unk>") for tid in target_ids]
 
         if not prefix_ids or not target_words:
             continue

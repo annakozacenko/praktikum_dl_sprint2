@@ -3,7 +3,7 @@ from configs.config import *
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from collections import Counter
-
+import re
 
 
 def clean_data(data):
@@ -32,7 +32,9 @@ def prepare_dataset(tokens):
 
 
 def tokenize(text):
-    return text.split()
+    # return text.split()
+    tokens = re.findall(r'\b\w+\b')
+    return tokens
 
 
 def split_data(data):
