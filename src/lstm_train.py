@@ -94,7 +94,9 @@ for epoch in range(n_epochs):
             loss = loss_fn(outputs.view(-1, vocab_size), labels.view(-1))
             total_val_loss += loss.item()
     avg_val_loss = total_val_loss / len(val_dataloader)
-    rouge_results = evaluate_model(model, val_dataset, vocab)
+    #rouge_results = evaluate_model(model, val_dataset, vocab)
+    sample_texts = val_df["text"].tolist()
+    rouge_results = evaluate_model(model, sample_texts, vocab)
     print(
         f"Epoch {epoch+1}, Train Loss: {avg_train_loss:.4f}, "
         f"Val Loss: {avg_val_loss:.4f}, "
