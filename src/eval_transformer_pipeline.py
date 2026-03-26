@@ -22,7 +22,7 @@ def evaluate_transformer(dataset, max_new_tokens=5, max_samples=200):
         prefix = " ".join(words[:cut])
         target = " ".join(words[cut:])
 
-        result = generator(prefix, max_new_tokens=max_new_tokens, do_sample=False)
+        result = generator(prefix, max_new_tokens=max_new_tokens, do_sample=True, top_k = 50 )
         generated_text = result[0]["generated_text"]
 
         new_text = generated_text[len(prefix) :].strip()

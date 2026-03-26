@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from configs.config import *
 import torch
 from tqdm import tqdm
-from lstm_model import SimpleRNN
+from lstm_model import LSTMModel
 from next_token_dataset import NextTokenDataset, collate_fn
 from torch.utils.data import DataLoader
 from data_utils import split_data, build_vocab, load_and_clean
@@ -51,7 +51,7 @@ output_size = len(vocab)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Используем: {device}")
 
-model = SimpleRNN(vocab_size, EMBEDDING_DIM, HIDDEN_SIZE, output_size, NUM_LAYERS, DROPOUT)
+model = LSTMModel(vocab_size, EMBEDDING_DIM, HIDDEN_SIZE, output_size, NUM_LAYERS, DROPOUT)
 
 
 model.to(device)

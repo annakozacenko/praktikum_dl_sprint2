@@ -9,9 +9,11 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence
 class NextTokenDataset(Dataset):
     def __init__(self, data, vocab):
         self.samples = []
+        eos_id = vocab["<eos>"]
         for text in data["text"]:
             tokens = tokenize(text)
             token_ids = [vocab.get(token, vocab["<unk>"]) for token in tokens]
+            token_ids.append(eos_id)
             if len(token_ids) < 2:
                 continue
             X, y = prepare_dataset(token_ids)

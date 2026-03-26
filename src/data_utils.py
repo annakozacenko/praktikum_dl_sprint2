@@ -21,7 +21,7 @@ def clean_data(data):
 def load_and_clean(path):
     data = pd.read_csv(path, header=None, names=["text"], sep="\x01")
     cleaned_data = clean_data(data)
-    cleaned_data.to_csv("data/preprocessed_data.csv", index=False)
+    cleaned_data.to_csv(PREPROCESSED_PATH, index=False)
     return cleaned_data
 
 
@@ -40,9 +40,9 @@ def split_data(data):
 
     val_df, test_df = train_test_split(temp_df, test_size=0.5, random_state=RANDOM_STATE)
 
-    train_df.to_csv("data/train.csv", index=False)
-    val_df.to_csv("data/val.csv", index=False)
-    test_df.to_csv("data/test.csv", index=False)
+    train_df.to_csv(TRAIN_PATH, index=False)
+    val_df.to_csv(VAL_PATH, index=False)
+    test_df.to_csv(TEST_PATH, index=False)
 
     return train_df, val_df, test_df
 
@@ -54,13 +54,11 @@ def build_vocab(train_df, max_vocab_size=None, min_freq=2):
             counter[word] += 1
     
     filtered = [(w, c) for w, c in counter.items() if c >= min_freq]
-
     filtered.sort(key=lambda x: -x[1])
     if max_vocab_size:
         filtered = filtered[:max_vocab_size]
     
-    vocab = {"<unk>": 0}
-    for idx, (word, _) in enumerate(filtered, start=1):
+    vocab = {"<pad>": 0, "<unk>": 1, "<eos>": 2}
+    for idx, (word, _) in enumerate(filtered, start=3):
         vocab[word] = idx
     return vocab
-

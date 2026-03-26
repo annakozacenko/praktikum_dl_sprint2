@@ -4,7 +4,7 @@ import evaluate
 rouge = evaluate.load("rouge")
 
 
-def evaluate_model(model, dataset, vocab, max_new_tokens=5, max_samples=100):
+def evaluate_model(model, dataset, vocab, max_new_tokens=5, max_samples=200):
     device = next(model.parameters()).device
     idx2word = {v: k for k, v in vocab.items()}
     all_predictions = []
