@@ -33,7 +33,7 @@ def prepare_dataset(tokens):
 
 def tokenize(text):
     # return text.split()
-    tokens = re.findall(r'\b\w+\b')
+    tokens = re.findall(r'\b\w+\b', text)
     return tokens
 
 
