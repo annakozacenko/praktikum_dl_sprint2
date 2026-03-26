@@ -7,7 +7,6 @@ class LSTMModel(nn.Module):
     def __init__(self, vocab_size, embedding_dim, hidden_size, output_size, num_layers, dropout):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
-       # self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True)
         self.lstm = nn.LSTM(embedding_dim, hidden_size, batch_first=True, num_layers=num_layers, dropout=dropout if num_layers > 1 else 0)
 
         self.fc = nn.Linear(hidden_size, output_size)
